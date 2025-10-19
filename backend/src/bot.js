@@ -309,20 +309,16 @@ bot.onText(/\/(|balance|play|deposit|history|help|withdraw)/, async (msg, match)
   
  case "spin_game":
     try {
-        console.log("Spin game triggered for user:", user.username, "chatId:", chatId);
-        console.log("Frontend URL:", process.env.FRONTEND_URL);
-        
-        // Acknowledge the callback first
-        await bot.answerCallbackQuery(callbackQuery.id, { text: "Loading Spin & Win..." });
+        console.log("✅ 1. Spin game callback triggered");
+        console.log("✅ 2. Chat ID:", chatId);
+        console.log("✅ 3. User found:", !!user);
+        console.log("✅ 4. User username:", user?.username);
+        console.log("✅ 5. FRONTEND_URL:", process.env.FRONTEND_URL);
 
-        // Check if user has required data
-        if (!user || !user.username) {
-            throw new Error("User data not found");
-        }
+        // Remove answerCallbackQuery for now to isolate the issue
+        // await bot.answerCallbackQuery(callbackQuery.id);
 
-        if (!process.env.FRONTEND_URL) {
-            throw new Error("FRONTEND_URL not configured");
-        }
+        console.log("✅ 6. About to send message...");
 
         const message = await bot.sendMessage(chatId, "Select your bet amount for Spin & Win:", {
             reply_markup: {
@@ -358,21 +354,16 @@ bot.onText(/\/(|balance|play|deposit|history|help|withdraw)/, async (msg, match)
                 ]
             }
         });
-        
-        console.log("Spin game message sent successfully");
+
+        console.log("✅ 7. Message sent successfully:", message.message_id);
 
     } catch (error) {
-        console.error("Spin game error details:", error);
-        console.error("Error stack:", error.stack);
+        console.error("❌ ERROR in spin_game:");
+        console.error("❌ Error message:", error.message);
+        console.error("❌ Error stack:", error.stack);
+        console.error("❌ Error at step: Check which step number above failed");
         
-        // Answer the callback query with error
-        await bot.answerCallbackQuery(callbackQuery.id, { 
-            text: "Error starting Spin & Win", 
-            show_alert: true 
-        });
-        
-        // Send error message to user
-        bot.sendMessage(chatId, "❌ Sorry, there was an error starting Spin & Win. Please try again.");
+        // Don't send any messages here for now, just log
     }
     break;
     case "help":
