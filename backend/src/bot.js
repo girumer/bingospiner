@@ -307,8 +307,50 @@ bot.onText(/\/(|balance|play|deposit|history|help|withdraw)/, async (msg, match)
       });
   break;
   
-  
-    
+  case "spin_game":
+    try {
+        bot.answerCallbackQuery(callbackQuery.id);
+
+        bot.sendMessage(chatId, "Select your bet amount for Spin & Win:", {
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        { 
+                            text: "Spin 5 ETB", 
+                            web_app: { 
+                                url: `${process.env.FRONTEND_URL}/SpinnerSelection?username=${encodeURIComponent(user.username)}&telegramId=${user.telegramId}&stake=5` 
+                            } 
+                        },
+                        { 
+                            text: "Spin 10 ETB", 
+                            web_app: { 
+                                url: `${process.env.FRONTEND_URL}/SpinnerSelection?username=${encodeURIComponent(user.username)}&telegramId=${user.telegramId}&stake=10` 
+                            } 
+                        },
+                    ],
+                    [
+                        { 
+                            text: "Spin 20 ETB", 
+                            web_app: { 
+                                url: `${process.env.FRONTEND_URL}/SpinnerSelection?username=${encodeURIComponent(user.username)}&telegramId=${user.telegramId}&stake=20` 
+                            } 
+                        },
+                        { 
+                            text: "Spin 50 ETB", 
+                            web_app: { 
+                                url: `${process.env.FRONTEND_URL}/SpinnerSelection?username=${encodeURIComponent(user.username)}&telegramId=${user.telegramId}&stake=50` 
+                            } 
+                        },
+                    ]
+                ]
+            }
+        });
+    } catch (error) {
+        console.error("Spin game error:", error);
+        bot.sendMessage(chatId, "❌ Unknown error occurred while starting Spin & Win.");
+    }
+    break;
+
     
     case "help":
      bot.sendMessage(chatId, "Use the menu to check balance, play games, or see your history. If you need further assistance, please contact our support team.", {
@@ -618,16 +660,7 @@ bot.on('callback_query', async (callbackQuery) => {
     case "balance":
       bot.sendMessage(chatId, `💰 Your wallet balance: ${user.Wallet} Birr`);
       break;
- case "spin_game": // ✅ ADDED THIS
-    try {
-      bot.answerCallbackQuery(callbackQuery.id);
-      bot.sendMessage(chatId, "🎰 The Spin & Win game is starting soon!");
-      // Add spin logic here (e.g., random reward, update wallet, etc.)
-    } catch (error) {
-      console.error("Spin game error:", error);
-      bot.sendMessage(chatId, "❌ Unknown error occurred while starting Spin & Win.");
-    }
-    break;
+
     case "history":
       if (!user.gameHistory || user.gameHistory.length === 0) {
         bot.sendMessage(chatId, "You have no game history yet.");
