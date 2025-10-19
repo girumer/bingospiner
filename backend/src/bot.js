@@ -618,7 +618,16 @@ bot.on('callback_query', async (callbackQuery) => {
     case "balance":
       bot.sendMessage(chatId, `💰 Your wallet balance: ${user.Wallet} Birr`);
       break;
-
+ case "spin_game": // ✅ ADDED THIS
+    try {
+      bot.answerCallbackQuery(callbackQuery.id);
+      bot.sendMessage(chatId, "🎰 The Spin & Win game is starting soon!");
+      // Add spin logic here (e.g., random reward, update wallet, etc.)
+    } catch (error) {
+      console.error("Spin game error:", error);
+      bot.sendMessage(chatId, "❌ Unknown error occurred while starting Spin & Win.");
+    }
+    break;
     case "history":
       if (!user.gameHistory || user.gameHistory.length === 0) {
         bot.sendMessage(chatId, "You have no game history yet.");
