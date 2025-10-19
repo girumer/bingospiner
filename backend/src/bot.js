@@ -307,11 +307,24 @@ bot.onText(/\/(|balance|play|deposit|history|help|withdraw)/, async (msg, match)
       });
   break;
   
-  case "spin_game":
+ case "spin_game":
     try {
-        bot.answerCallbackQuery(callbackQuery.id);
+        console.log("Spin game triggered for user:", user.username, "chatId:", chatId);
+        console.log("Frontend URL:", process.env.FRONTEND_URL);
+        
+        // Acknowledge the callback first
+        await bot.answerCallbackQuery(callbackQuery.id, { text: "Loading Spin & Win..." });
 
-        bot.sendMessage(chatId, "Select your bet amount for Spin & Win:", {
+        // Check if user has required data
+        if (!user || !user.username) {
+            throw new Error("User data not found");
+        }
+
+        if (!process.env.FRONTEND_URL) {
+            throw new Error("FRONTEND_URL not configured");
+        }
+
+        const message = await bot.sendMessage(chatId, "Select your bet amount for Spin & Win:", {
             reply_markup: {
                 inline_keyboard: [
                     [
@@ -345,13 +358,23 @@ bot.onText(/\/(|balance|play|deposit|history|help|withdraw)/, async (msg, match)
                 ]
             }
         });
+        
+        console.log("Spin game message sent successfully");
+
     } catch (error) {
-        console.error("Spin game error:", error);
-        bot.sendMessage(chatId, "❌ Unknown error occurred while starting Spin & Win.");
+        console.error("Spin game error details:", error);
+        console.error("Error stack:", error.stack);
+        
+        // Answer the callback query with error
+        await bot.answerCallbackQuery(callbackQuery.id, { 
+            text: "Error starting Spin & Win", 
+            show_alert: true 
+        });
+        
+        // Send error message to user
+        bot.sendMessage(chatId, "❌ Sorry, there was an error starting Spin & Win. Please try again.");
     }
     break;
-
-    
     case "help":
      bot.sendMessage(chatId, "Use the menu to check balance, play games, or see your history. If you need further assistance, please contact our support team.", {
         reply_markup: {
