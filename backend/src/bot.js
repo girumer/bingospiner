@@ -324,7 +324,24 @@ bot.onText(/\/(|balance|play|deposit|history|help|withdraw)/, async (msg, match)
       });
   break;
   
-      
+   case "spin_game":
+    // The Spinner game usually uses a fixed stake, but you can offer options too.
+    bot.sendMessage(chatId, "Select your bet amount for Spin & Win:", {
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    // Ensure the web_app URL points to the correct component path: /SpinnerSelection
+                    { text: "Spin 5 ETB", web_app: { url: `${process.env.FRONTEND_URL}/SpinnerSelection?username=${encodeURIComponent(user.username)}&telegramId=${user.telegramId}&stake=5` } },
+                    { text: "Spin 10 ETB", web_app: { url: `${process.env.FRONTEND_URL}/SpinnerSelection?username=${encodeURIComponent(user.username)}&telegramId=${user.telegramId}&stake=10` } },
+                ],
+                [
+                    { text: "Spin 20 ETB", web_app: { url: `${process.env.FRONTEND_URL}/SpinnerSelection?username=${encodeURIComponent(user.username)}&telegramId=${user.telegramId}&stake=20` } },
+                    { text: "Spin 50 ETB", web_app: { url: `${process.env.FRONTEND_URL}/SpinnerSelection?username=${encodeURIComponent(user.username)}&telegramId=${user.telegramId}&stake=50` } },
+                ]
+            ]
+        }
+    });
+    break;   
     
     case "help":
      bot.sendMessage(chatId, "Use the menu to check balance, play games, or see your history. If you need further assistance, please contact our support team.", {
