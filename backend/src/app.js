@@ -1364,7 +1364,7 @@ app.post("/loginacess",getUsernameFromToken,(req,res)=>{
   res.json({ valid: true, username: req.username,role:req.role,phoneNumber:req.phoneNumber });
 }
 ) 
- app.post("/depositcheckB", async (req, res) => {
+ app.get("/depositcheckB", async (req, res) => {
     const { telegramId } = req.body;
     console.log("Checking balance for Telegram ID:", telegramId);
 
