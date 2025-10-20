@@ -578,7 +578,7 @@ io.to(rId).emit("playerCount", { totalPlayers: activePlayers });
    // console.log(`New connection: ${socket.id}, username=${username}, telegramId=${telegramId}, clientId=${clientId}`);
   });
 // --- CHECK PLAYER STATUS ---
-socket.on("checkPlayerStatus", ({ roomId, clientId }) => {
+/* socket.on("checkPlayerStatus", ({ roomId, clientId }) => {
     const room = rooms[String(roomId)];
 
     // 1. Check if the room exists.
@@ -591,10 +591,35 @@ socket.on("checkPlayerStatus", ({ roomId, clientId }) => {
         return;
     } */
 
+        
     // Player is already in an active game with selected cartelas.
-    const selectedCartelas = room.playerCartelas[clientId];
+  /*   const selectedCartelas = room.playerCartelas[clientId];
     socket.emit("playerStatus", { inGame: true, selectedCartelas });
    // console.log(`Player ${clientId} is already in game in room ${roomId}.`);
+}); */ 
+socket.on("checkPlayerStatus", ({ roomId, clientId }) => {
+    const room = rooms[String(roomId)];
+
+    // 1. CRITICAL: Check if the room object exists first.
+    if (!room) {
+        socket.emit("playerStatus", { inGame: false });
+        console.log(`Room ${roomId} does not exist yet.`);
+        return;
+    }
+    
+    // 2. Check subsequent nested properties safely.
+    const playerCartelas = room.playerCartelas ? room.playerCartelas[clientId] : null;
+
+    if (!room.activeGame || !playerCartelas || playerCartelas.length === 0) {
+        // Player is not in an active game or has no cartelas.
+        socket.emit("playerStatus", { inGame: false });
+        console.log(`Player ${clientId} is not in an active game in room ${roomId}.`);
+        return;
+    } 
+
+    // Player is already in an active game with selected cartelas.
+    const selectedCartelas = playerCartelas; // This is now safe
+    socket.emit("playerStatus", { inGame: true, selectedCartelas });
 });
   // --- SELECT CARTELA ---
   socket.on("selectCartela", async ({ roomId, cartelaIndex }) => {
