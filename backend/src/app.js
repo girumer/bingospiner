@@ -613,7 +613,7 @@ socket.on("checkPlayerStatus", ({ roomId, clientId }) => {
     if (!room.activeGame || !playerCartelas || playerCartelas.length === 0) {
         // Player is not in an active game or has no cartelas.
         socket.emit("playerStatus", { inGame: false });
-        console.log(`Player ${clientId} is not in an active game in room ${roomId}.`);
+        console.log(`Playersss ${clientId} is not in an active game in room ${roomId}.`);
         return;
     } 
 
