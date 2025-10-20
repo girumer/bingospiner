@@ -562,41 +562,71 @@ const onUpdateSelectedCartelas = ({ selectedIndexes }) => {
   }, [navigate, roomId, usernameParam, stake, telegramIdParam]);
 
 useEffect(() => {
-  if (!roomId || !clientId) return;
 
-  // Wait a bit for room to be fully initialized before checking status
-  const checkStatusTimeout = setTimeout(() => {
-    socket.emit("checkPlayerStatus", { roomId, clientId });
-  }, 500); // 500ms delay to ensure room is created
+  if (!roomId || !clientId) return;
 
-  const handlePlayerStatus = ({ inGame, selectedCartelas }) => {
-    if (inGame) {
-      // Player is already in a game → navigate directly to BingoBoard
-      const queryString = new URLSearchParams({
-        username: usernameParam,
-        telegramId: telegramIdParam,
-        roomId,
-        stake
-      }).toString();
 
-      navigate(`/BingoBoard?${queryString}`, {
-        state: {
-          username: usernameParam,
-          roomId,
-          stake,
-          myCartelas: selectedCartelas,
-          telegramId: telegramIdParam
-        }
-      });
-    }
-  };
 
-  socket.on("playerStatus", handlePlayerStatus);
+  // Ask server if this player is already in an active game
 
-  return () => {
-    clearTimeout(checkStatusTimeout);
-    socket.off("playerStatus", handlePlayerStatus);
-  };
+  socket.emit("checkPlayerStatus", { roomId, clientId });
+
+
+
+  const handlePlayerStatus = ({ inGame, selectedCartelas }) => {
+
+    if (inGame) {
+
+      // Player is already in a game → navigate directly to BingoBoard
+
+      const queryString = new URLSearchParams({
+
+        username: usernameParam,
+
+        telegramId: telegramIdParam,
+
+        roomId,
+
+        stake
+
+      }).toString();
+
+
+
+      navigate(`/BingoBoard?${queryString}`, {
+
+        state: {
+
+          username: usernameParam,
+
+          roomId,
+
+          stake,
+
+          myCartelas: selectedCartelas,
+
+          telegramId: telegramIdParam
+
+        }
+
+      });
+
+    }
+
+  };
+
+
+
+  socket.on("playerStatus", handlePlayerStatus);
+
+
+
+  return () => {
+
+    socket.off("playerStatus", handlePlayerStatus);
+
+  };
+
 }, [roomId, clientId, usernameParam, telegramIdParam, stake, navigate]);
 
 
