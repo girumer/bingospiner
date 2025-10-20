@@ -569,7 +569,7 @@ useEffect(() => {
 
   // Ask server if this player is already in an active game
 
-  socket.emit("checkPlayerStatus", { roomId, clientId });
+  //socket.emit("checkPlayerStatus", { roomId, clientId });
 
 
 
