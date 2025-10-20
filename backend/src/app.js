@@ -55,14 +55,24 @@ const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://localhost:3000",
-      "http://localhost:3000",
-      "http://167.235.140.218",
-      "http://adeyebingo.com",
-      "http://adeyebingo.com",
-      "http://www.adeyebingo.com",
-      "http://www.adeyebingo.com",
-      "http://api.adeyebingo.com"
+     'http://localhost:3000',
+  'https://localhost:3000',
+  'http://167.235.140.218',
+  'http://adeyebingo.com',
+  'https://adeyebingo.com',
+  'http://www.adeyebingo.com',
+  'https://www.adeyebingo.com',
+  
+  // ADD THESE TWO LINES:
+  'http://api.adeyebingo.com',    // ← ADD THIS (HTTP)
+  'https://api.adeyebingo.com',   // ← YOU ALREADY HAVE THIS
+  
+  'http://api.new.adeyebingo.com',    // ← ADD THIS (HTTP)
+  'https://api.new.adeyebingo.com',   // ← YOU ALREADY HAVE THIS
+  
+  // ... rest of your origins
+  'http://new.adeyebingo.com',
+  'https://new.adeyebingo.com',
     ],
     methods: ["GET", "POST"],
     credentials: true
