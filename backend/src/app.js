@@ -84,6 +84,7 @@ const allowedOrigins = [
   'https://api.adeyebingo.com',   // ← YOU ALREADY HAVE THIS
   
   // ... rest of your origins
+  'http://new.adeyebingo.com',
   'https://new.adeyebingo.com',
 ];
 app.use(cors({
