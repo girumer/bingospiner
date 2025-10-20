@@ -83,6 +83,9 @@ const allowedOrigins = [
   'http://api.adeyebingo.com',    // ← ADD THIS (HTTP)
   'https://api.adeyebingo.com',   // ← YOU ALREADY HAVE THIS
   
+  'http://api.new.adeyebingo.com',    // ← ADD THIS (HTTP)
+  'https://api.new.adeyebingo.com',   // ← YOU ALREADY HAVE THIS
+  
   // ... rest of your origins
   'http://new.adeyebingo.com',
   'https://new.adeyebingo.com',
