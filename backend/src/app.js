@@ -584,12 +584,12 @@ socket.on("checkPlayerStatus", ({ roomId, clientId }) => {
     // 1. Check if the room exists.
     // 2. Check if there's an active game in the room.
     // 3. Check if this specific player has selected cartelas.
-    if (!room || !room.activeGame || !room.playerCartelas[clientId] || room.playerCartelas[clientId].length === 0) {
+   /*  if (!room || !room.activeGame || !room.playerCartelas[clientId] || room.playerCartelas[clientId].length === 0) {
         // Player is not in an active game or has no cartelas, so they should go to the selection page.
         socket.emit("playerStatus", { inGame: false });
         console.log(`Player ${clientId} is not in an active game in room ${roomId}.`);
         return;
-    }
+    } */
 
     // Player is already in an active game with selected cartelas.
     const selectedCartelas = room.playerCartelas[clientId];
