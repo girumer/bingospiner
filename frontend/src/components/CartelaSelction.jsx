@@ -561,7 +561,7 @@ const onUpdateSelectedCartelas = ({ selectedIndexes }) => {
 
   }, [navigate, roomId, usernameParam, stake, telegramIdParam]);
 
-useEffect(() => {
+/* useEffect(() => {
 
   if (!roomId || !clientId) return;
 
@@ -627,9 +627,81 @@ useEffect(() => {
 
   };
 
-}, [roomId, clientId, usernameParam, telegramIdParam, stake, navigate]);
+}, [roomId, clientId, usernameParam, telegramIdParam, stake, navigate]); */
 
+// --- MAIN INITIALIZATION EFFECT ---
+useEffect(() => {
+    // Check if we have all required parameters
+    if (!roomId || !usernameParam || !telegramIdParam) {
+        console.log("Waiting for all required URL parameters...");
+        setIsLoading(false);
+        return;
+    }
 
+    // Define the handler for the status check response
+    const handlePlayerStatus = ({ inGame, selectedCartelas }) => {
+        if (inGame) {
+            // Player is already in a game → navigate directly to BingoBoard
+            const queryString = new URLSearchParams({
+                username: usernameParam,
+                telegramId: telegramIdParam,
+                roomId,
+                stake
+            }).toString();
+
+            navigate(`/BingoBoard?${queryString}`, {
+                state: {
+                    username: usernameParam,
+                    roomId,
+                    stake,
+                    myCartelas: selectedCartelas,
+                    telegramId: telegramIdParam
+                }
+            });
+        } else {
+             // Only set loading to false AFTER the checkPlayerStatus result is processed
+             // This ensures the screen doesn't flash if the player is routed away
+             setIsLoading(false); 
+        }
+    };
+    
+    // Set up the listener for the status check BEFORE emitting
+    socket.on("playerStatus", handlePlayerStatus);
+
+    const initializeGame = async () => {
+        try {
+            await fetchWalletData();
+
+            // 1. Join the game room (This creates the room object on the server)
+            socket.emit("joinRoom", {
+                roomId,
+                username: usernameParam,
+                telegramId: telegramIdParam,
+                clientId,
+            });
+
+            // 2. CRITICAL: NOW send the status check (room is guaranteed to exist)
+            socket.emit("checkPlayerStatus", { roomId, clientId }); 
+
+        } catch (err) {
+            console.error("Failed to initialize. Error:", err.response ? err.response.data : err.message);
+            toast.error("Failed to initialize game. Please try again.");
+            setIsLoading(false); // Make sure to release loading state on error
+        }
+        // NOTE: We don't set setIsLoading(false) here, we do it in handlePlayerStatus.
+    };
+
+    initializeGame();
+    // ... (rest of your currentGameState handler setup) ...
+    
+    // Cleanup for this effect
+    return () => {
+        socket.off("currentGameState", handleGameState);
+        // CRITICAL: Cleanup the playerStatus listener here too
+        socket.off("playerStatus", handlePlayerStatus); 
+    };
+
+}, [roomId, usernameParam, telegramIdParam, clientId, stake, navigate]); // Added 'navigate' to dependencies
 
   // --- Button Handlers ---
 
